@@ -1,0 +1,9 @@
+{
+  "name": "x402-punks-api",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "ethers": "^6.11.1",
+    "express": "^4.19.2"
+  }
+}
