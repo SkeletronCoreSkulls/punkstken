@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
   const response = {
     x402Version: 1,
-    payer: "x402scan", // <— le indica que el ejecutor será x402scan mismo
+    payer: "x402scan",
     accepts: [
       {
         scheme: "exact",
@@ -14,22 +14,29 @@ export default async function handler(req, res) {
         resource: "mint:punks:1",
         description: "Mint 50,000 PUNKS tokens for 10 USDC on Base network.",
         mimeType: "application/json",
-        payTo: "0x4d0abbdc64d2f854ec7d4a6d9fa2a4e6b1c0aa42", // <— tu treasury
+        payTo: "0x4d0abbdc64d2f854ec7d4a6d9fa2a4e6b1c0aa42",
         maxTimeoutSeconds: 300,
         asset: "USDC",
 
+        // 🔧 Aquí definimos el esquema de ejecución externa (auto-mint)
         outputSchema: {
           input: {
             type: "http",
             method: "POST",
             bodyType: "json",
-            // ⚠️ la ruta que realmente debe ejecutar luego del pago:
-            headerFields: {
-              "Content-Type": { type: "string", required: true, description: "application/json" }
-            },
-            bodyFields: {
-              resource: { type: "string", required: true },
-              txHash: { type: "string", required: true }
+            // ⚠️ Esto es lo que x402scan reconocerá como el endpoint de ejecución
+            outputSchema: {
+              input: {
+                type: "http",
+                method: "POST",
+                bodyType: "json",
+                url: "https://punks-mocha.vercel.app/api/nft/notify"
+              },
+              output: {
+                status: "string",
+                message: "string",
+                txMint: "string"
+              }
             }
           },
           output: {
@@ -41,14 +48,12 @@ export default async function handler(req, res) {
 
         extra: {
           project: "PUNKS",
-          version: "1.0.3",
-          executeEndpoint: "https://punks-mocha.vercel.app/api/nft/notify",
+          version: "1.0.4",
           autoMint: true
         }
       }
     ]
   };
 
-  // 👇 x402scan espera código 402 Payment Required
   return res.status(402).json(response);
 }
