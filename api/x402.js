@@ -13,7 +13,7 @@ export default async function handler(req, res) {
         resource: "mint:punks:1",
         description: "Mint 50,000 PUNKS tokens for 10 USDC on Base network.",
         mimeType: "application/json",
-        payTo: "0xYOUR_TREASURY_ADDRESS",
+        payTo: "0x25958e4A948F13B98B804BfB9341D475172E42BC",
         maxTimeoutSeconds: 300,
         asset: "USDC",
         outputSchema: {
