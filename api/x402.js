@@ -13,15 +13,17 @@ export default async function handler(req, res) {
         resource: "mint:punks:1",
         description: "Mint 50,000 PUNKS tokens for 10 USDC on Base network.",
         mimeType: "application/json",
-        payTo: "0x25958e4A948F13B98B804BfB9341D475172E42BC", // <-- tu treasury address
+        payTo: "0x4d0abbdc64d2f854ec7d4a6d9fa2a4e6b1c0aa42",
         maxTimeoutSeconds: 300,
         asset: "USDC",
 
-        // Minimal schema: auto-execute after payment, no manual fields
+        // Explicit execution endpoint for x402scan to call after payment
         outputSchema: {
           input: {
             type: "http",
-            method: "POST"
+            method: "POST",
+            bodyType: "json",
+            url: "https://punks-mocha.vercel.app/api/nft/notify"
           },
           output: {
             status: "string",
@@ -32,14 +34,13 @@ export default async function handler(req, res) {
 
         extra: {
           project: "PUNKS",
-          version: "1.0.1",
-          autoMint: true,
-          notes: "Automatic mint after 10 USDC payment via x402scan"
+          version: "1.0.2",
+          endpoint: "https://punks-mocha.vercel.app/api/nft/notify",
+          autoMint: true
         }
       }
     ]
   };
 
-  // Respond with 402 Payment Required for x402scan schema detection
   return res.status(402).json(response);
 }
