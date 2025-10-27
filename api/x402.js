@@ -9,12 +9,12 @@ export default async function handler(req, res) {
       {
         scheme: "exact",
         network: "base",
-        maxAmountRequired: "10000000",
+        maxAmountRequired: "10000000", // 10 USDC (6 decimals)
         resource: "mint:punks:1",
         description: "Mint 50,000 PUNKS tokens for 10 USDC on Base network.",
         mimeType: "application/json",
-        payTo: "0x25958e4A948F13B98B804BfB9341D475172E42BC",
-        maxTimeoutSeconds: 2000,
+        payTo: "0xYOUR_TREASURY_ADDRESS",
+        maxTimeoutSeconds: 300,
         asset: "USDC",
         outputSchema: {
           input: {
@@ -40,5 +40,6 @@ export default async function handler(req, res) {
     ]
   };
 
-  return res.status(200).json(response);
+  // 👇 This is the critical line — must respond with 402 for x402scan
+  return res.status(402).json(response);
 }
