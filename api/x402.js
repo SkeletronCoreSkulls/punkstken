@@ -13,18 +13,15 @@ export default async function handler(req, res) {
         resource: "mint:punks:1",
         description: "Mint 50,000 PUNKS tokens for 10 USDC on Base network.",
         mimeType: "application/json",
-        payTo: "0x25958e4A948F13B98B804BfB9341D475172E42BC",
+        payTo: "0x25958e4A948F13B98B804BfB9341D475172E42BC", // <-- tu treasury address
         maxTimeoutSeconds: 300,
         asset: "USDC",
+
+        // Minimal schema: auto-execute after payment, no manual fields
         outputSchema: {
           input: {
             type: "http",
-            method: "POST",
-            bodyType: "json",
-            bodyFields: {
-              resource: { type: "string", required: true, description: "x402 resource identifier" },
-              txHash: { type: "string", required: true, description: "USDC payment transaction hash" }
-            }
+            method: "POST"
           },
           output: {
             status: "string",
@@ -32,14 +29,17 @@ export default async function handler(req, res) {
             txMint: "string"
           }
         },
+
         extra: {
           project: "PUNKS",
-          version: "1.0.0"
+          version: "1.0.1",
+          autoMint: true,
+          notes: "Automatic mint after 10 USDC payment via x402scan"
         }
       }
     ]
   };
 
-  // 👇 This is the critical line — must respond with 402 for x402scan
+  // Respond with 402 Payment Required for x402scan schema detection
   return res.status(402).json(response);
 }
